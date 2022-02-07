@@ -56,11 +56,6 @@ import arcpy
 
 
 
-in_table ="d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie/hydtest.csv"
-
-with open(in_table, 'r') as plik:
-    columns = plik.readline()
-
-    line = plik.readline().split(';')
-    print(type(line[3]))
-    print('{}'.format(line[3]))
+with open("d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie/meteo_test.csv", 'r') as plik:
+    lines = plik.readline()
+    print(lines)

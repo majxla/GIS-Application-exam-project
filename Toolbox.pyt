@@ -1,42 +1,23 @@
 import arcpy
 import os
-
-def hydroData():
-    pass
-
-def meteoData():
-    pass
-
-
 class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
-
-        # tu się robi ogólnie tę paczkę toolbox w sensie ta skrzynka z narzędziami co się wyświetla
         self.label = "HydroMeteoData Toolbox"
         self.alias = "HydroMeteoData"
-
-        # List of tool classes associated with this toolbox
-        # tu się dodaje narzędzie do skrzynki, my mamy tylko jedno narzędzie, ale można kilka zdefiniować
         self.tools = [HydroMeteoData]
 
-
 class HydroMeteoData(object):
-    # to jest narzędzie w skrzynce
-
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
 
-        # tu opis narzędzia
         self.label = "HydroMeteoData"
         self.description = "Generate archival hydrological and meteorological data for Poland from 2010-2020."
         self.canRunInBackground = False
 
     def getParameterInfo(self):
         """Define parameter definitions"""
-
-        # tu definicja pól w narzędziu czyli do wyboru dane hydro/meteo, przedział dat i miejsce do zapisania warstw
 
         yearList = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
 
@@ -83,9 +64,6 @@ class HydroMeteoData(object):
             direction = "Output"
         )
 
-        # save.parameterDependencies = [dane.name]
-        # save.schema.clone = True
-
         params = [dane, data1, data2, save]
         return params
 
@@ -107,7 +85,6 @@ class HydroMeteoData(object):
             yearList = [year for year in range(year1, 2021)]
             parameters[2].filter.list = yearList
         
-
         # tu analogicznie, jeżeli będzie wybrany rok DO którego mają być dane to żeby nie dało się wybrać roku późniejszego OD którego mają być dane
         if parameters[2].value:
             year2 = parameters[2].value
@@ -126,12 +103,9 @@ class HydroMeteoData(object):
     def execute(self, parameters, messages):
         """The source code of the tool."""
 
-        # tu co ma się dziać jak się naciśnie OK
-
         # arcpy.env.workspace = "d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie"
         # arcpy.AddMessage(arcpy.env.workspace)
 
-        # tutaj pobieram ścieżkę podaną przez użytkownika i dzielę żeby wydzielić folder, do którego zapisać warstwę i nazwę nowej warstwy
         out = parameters[3].valueAsText.split('\\')
         out_folder = parameters[3].valueAsText.split(out[-1])[0]
         out_name = out[-1] #test.shp
@@ -146,7 +120,7 @@ class HydroMeteoData(object):
 
         if parameters[0].valueAsText == "Dane hydrologiczne":
             for year in years:
-                out_name = out_name0[0] + str(year) + "." + out_name0[1]
+                out_name = out_name0[0] + "hydro" + str(year) + "." + out_name0[1]
 
                 fc = arcpy.CreateFeatureclass_management(out_folder, out_name, "POINT")
 
@@ -164,7 +138,7 @@ class HydroMeteoData(object):
                 arcpy.AddField_management(fc, "x", "FLOAT", field_is_required=True)
                 arcpy.AddField_management(fc, "y", "FLOAT", field_is_required=True)
 
-                with open("d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie/hydtest.csv", 'r') as plik:
+                with open("d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie/hydro_test.csv", 'r') as plik:
                     columns = plik.readline().split(";")
                     line = plik.readline()
                 
@@ -207,5 +181,68 @@ class HydroMeteoData(object):
         
         if parameters[0].valueAsText == "Dane meteorologiczne":
             arcpy.AddMessage("METEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+
+            for year in years:
+                out_name = out_name0[0] + "meteo" + str(year) + "." + out_name0[1]
+
+                fc = arcpy.CreateFeatureclass_management(out_folder, out_name, "POINT")
+
+                arcpy.AddField_management(fc, "KOD", "LONG", field_is_required=True)
+                arcpy.AddField_management(fc, "NAZWA", "TEXT", field_is_required=True)
+                arcpy.AddField_management(fc, "ROK", "SHORT", field_is_required=True)
+                arcpy.AddField_management(fc, "MIES", "SHORT", field_is_required=True)
+                arcpy.AddField_management(fc, "DZIEN", "SHORT", field_is_required=True)
+
+                arcpy.AddField_management(fc, "SUMA_OPAD", "FLOAT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "RODZ_OPAD", "TEXT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "WYS_POKR", "FLOAT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "WYS_SW_SN", "FLOAT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "GAT_SNIEG", "TEXT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "RODZ_POKR", "TEXT", field_is_nullable = True, field_is_required=False)
+                arcpy.AddField_management(fc, "x", "FLOAT", field_is_required=True)
+                arcpy.AddField_management(fc, "y", "FLOAT", field_is_required=True)
+
+                with open("d:/geoinformatyka/SEMESTRV/programowanie_gis/zaliczenie/meteo_test.csv", 'r') as plik:
+                    status = ['8', '9']
+                    columns = plik.readline().split(";")
+                    line = plik.readline()
+
+                    cur = arcpy.InsertCursor(fc)
+
+                    while line:
+                        line = line.split(';')
+                        if int(line[2]) == year:
+
+                            row = cur.newRow()
+
+                            row.KOD = line[0]
+                            row.NAZWA = line[1]
+                            row.ROK = line[2]
+                            row.MIES = line[3]
+                            row.DZIEN = line[4]
+                            row.SUMA_OPAD = None if line[6] in status else line[5]
+                            row.RODZ_OPAD = None if line[7] == '' else line[7]
+                            row.WYS_POKR = None if line[9] in status else line[8]
+                            row.WYS_SW_SN = None if line[11] in status else line[10]
+                            row.GAT_SNIEG = None if line[13] in status else line[12]
+                            row.RODZ_POKR = None if line[15] in status else line[14]
+                            row.x = line[16]
+                            row.y = line[17].strip()
+
+                            cur.insertRow(row)
+
+                        line = plik.readline()
+                
+                dbf = out_name.split('.')[0] + ".dbf"
+                xyname = out_name.split('.')[0]
+                arcpy.MakeXYEventLayer_management(out_folder + dbf, "x" , "y", xyname)
+                arcpy.SaveToLayerFile_management(xyname, out_folder + xyname)
+
+                mxd = arcpy.mapping.MapDocument("CURRENT")
+                df = arcpy.mapping.ListDataFrames(mxd)[0]
+                add1 = arcpy.mapping.Layer(out_folder + xyname + ".lyr")
+                arcpy.mapping.AddLayer(df, add1)
+                arcpy.RefreshTOC()
+                arcpy.RefreshActiveView()
 
         return
