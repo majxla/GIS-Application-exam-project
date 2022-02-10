@@ -120,7 +120,7 @@ class HydroMeteoData(object):
 
         if parameters[0].valueAsText == "Dane hydrologiczne":
             for year in years:
-                out_name = out_name0[0] + "hydro" + str(year) + "." + out_name0[1]
+                out_name = out_name0[0] + str(year) + "." + out_name0[1]
 
                 fc = arcpy.CreateFeatureclass_management(out_folder, out_name, "POINT")
 
@@ -180,10 +180,9 @@ class HydroMeteoData(object):
                 arcpy.RefreshActiveView() # odświeża widok
         
         if parameters[0].valueAsText == "Dane meteorologiczne":
-            arcpy.AddMessage("METEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
             for year in years:
-                out_name = out_name0[0] + "meteo" + str(year) + "." + out_name0[1]
+                out_name = out_name0[0] + str(year) + "." + out_name0[1]
 
                 fc = arcpy.CreateFeatureclass_management(out_folder, out_name, "POINT")
 
