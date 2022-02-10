@@ -69,8 +69,6 @@ class HydroMeteoData(object):
 
     def isLicensed(self):
         """Set whether tool is licensed to execute."""
-
-        # tu że ma działać jak się kliknie że ma działać, nie rozumiem po co ta funkcja się wygenerowała XD
         return True
 
     def updateParameters(self, parameters):
@@ -96,8 +94,6 @@ class HydroMeteoData(object):
     def updateMessages(self, parameters):
         """Modify the messages created by internal validation for each tool
         parameter.  This method is called after internal validation."""
-
-        # tu jeszcze nie odkryłam po co to
         return
 
     def execute(self, parameters, messages):
@@ -108,9 +104,9 @@ class HydroMeteoData(object):
 
         out = parameters[3].valueAsText.split('\\')
         out_folder = parameters[3].valueAsText.split(out[-1])[0]
-        out_name = out[-1] #test.shp
+        out_name = out[-1]
 
-        out_name0 = out_name.split('.') # ['test', 'shp']
+        out_name0 = out_name.split('.')
 
         first_year = parameters[1].valueAsText
         last_year = parameters[2].valueAsText
