@@ -2,7 +2,7 @@
 # HydroMeteoData Toolbox
 
 This project is a Toolbox dedicated for ArcMap software. Its task is to process meteorological or hydrological data over a period of time specified by the user.
-It creates a .shp file with point data storing the selected data. Toolbox was coded with ArcPy library for Python 2.x.
+It creates a .shp file with point data storing the selected data. Toolbox was coded with ArcPy library for Python 2.x as exam project for GIS Applications university subject.
 
 Toolbox:
 
