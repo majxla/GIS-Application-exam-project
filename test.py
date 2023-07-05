@@ -1,5 +1,6 @@
 
 import arcpy
+import copy
 
 # baza = arcpy.GetParameterAsText(1)
 # print(baza)
